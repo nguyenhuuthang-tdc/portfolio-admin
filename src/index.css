@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+:root {
+  --sidebar-width: 240px;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #0a0a0a;
+  color: #e5e5e5;
+}
+
+/* TipTap Editor */
+.tiptap {
+  min-height: 400px;
+  padding: 1rem;
+  outline: none;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #6b7280;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.tiptap h1 { font-size: 2em; font-weight: bold; margin: 0.67em 0; }
+.tiptap h2 { font-size: 1.5em; font-weight: bold; margin: 0.75em 0; }
+.tiptap h3 { font-size: 1.17em; font-weight: bold; margin: 0.83em 0; }
+.tiptap ul { list-style: disc; padding-left: 1.5em; }
+.tiptap ol { list-style: decimal; padding-left: 1.5em; }
+.tiptap pre { background: #111; border-radius: 0.5rem; padding: 1rem; overflow-x: auto; }
+.tiptap code { background: #1a1a1a; padding: 0.2em 0.4em; border-radius: 0.25rem; font-family: monospace; }
+.tiptap blockquote { border-left: 3px solid #7c3aed; padding-left: 1rem; color: #9ca3af; margin: 1rem 0; }
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+.tiptap .tiptap-image {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+  max-width: 100%;
+  margin: 0.35rem 0.5rem 0.35rem 0;
+  line-height: 0;
+}
+.tiptap .tiptap-image-inner {
+  display: block;
+  position: relative;
+}
+.tiptap .tiptap-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0;
+  pointer-events: none;
+}
+.tiptap .tiptap-image.is-selected {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+.tiptap .tiptap-image-handle {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 12px;
+  height: 12px;
+  background: #7c3aed;
+  border: 2px solid #fff;
+  border-radius: 2px;
+  cursor: nwse-resize;
+  z-index: 2;
+}
+.tiptap .tiptap-image[data-align="inline"] {
+  display: inline-block;
+  float: none;
+}
+.tiptap .tiptap-image[data-align="left"] {
+  float: left;
+  margin: 0.25rem 0.85rem 0.5rem 0;
+}
+.tiptap .tiptap-image[data-align="right"] {
+  float: right;
+  margin: 0.25rem 0 0.5rem 0.85rem;
+}
+.tiptap .tiptap-image[data-align="center"] {
+  display: block;
+  float: none;
+  margin: 0.75rem auto;
+}
+.tiptap p::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.tiptap a { color: #7c3aed; text-decoration: underline; }
