@@ -20,9 +20,13 @@ const EMPTY_FORM: CategoryForm = { name: '', slug: '', color: '#6d28d9', descrip
 function slugify(s: string) {
   return s
     .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
     .trim();
 }
 
@@ -136,7 +140,7 @@ export function BlogCategoriesPage() {
           <div className="w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : categories && categories.length > 0 ? (
-        <div className="space-y-2">
+        <div className="space-y-2 mt-4">
           {categories.map((cat) =>
             editId === cat.id ? (
               <div key={cat.id} className="bg-neutral-900 border border-violet-500/40 rounded-2xl p-5">

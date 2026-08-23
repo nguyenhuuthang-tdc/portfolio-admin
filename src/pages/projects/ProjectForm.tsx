@@ -1,7 +1,8 @@
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { RichEditor } from '@/components/editor/RichEditor';
+import { MarkdownEditor } from '@/components/editor/MarkdownEditor';
+import { slugify } from '@/lib/slug';
 
 const ProjectFormSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -11,7 +12,6 @@ const ProjectFormSchema = z.object({
   techStack: z.string().optional(),
   githubUrl: z.string().optional(),
   demoUrl: z.string().optional().nullable(),
-  thumbnail: z.string().optional().nullable(),
   hasDetail: z.boolean(),
   status: z.enum(['active', 'archived', 'in_progress']),
 });
@@ -42,6 +42,7 @@ export function ProjectForm({ defaultValues, onSubmit, isLoading }: ProjectFormP
     register,
     handleSubmit,
     control,
+    setValue,
     watch,
     formState: { errors },
   } = useForm<ProjectFormRaw>({
@@ -56,8 +57,12 @@ export function ProjectForm({ defaultValues, onSubmit, isLoading }: ProjectFormP
   const hasDetail = watch('hasDetail');
 
   const processSubmit = (raw: ProjectFormRaw) => {
+    const detail = raw.detailContent?.trim() ?? '';
     onSubmit({
-      ...raw,
+      title: raw.title,
+      slug: slugify(raw.slug || raw.title),
+      description: raw.description,
+      detailContent: detail || undefined,
       techStack: raw.techStack
         ? raw.techStack
             .split(',')
@@ -66,7 +71,9 @@ export function ProjectForm({ defaultValues, onSubmit, isLoading }: ProjectFormP
         : undefined,
       githubUrl: raw.githubUrl || null,
       demoUrl: raw.demoUrl || null,
-      thumbnail: raw.thumbnail || null,
+      thumbnail: null,
+      hasDetail: raw.hasDetail && Boolean(detail),
+      status: raw.status,
     });
   };
 
@@ -92,6 +99,10 @@ export function ProjectForm({ defaultValues, onSubmit, isLoading }: ProjectFormP
           </label>
           <input
             {...register('slug')}
+            onBlur={(e) => {
+              const next = slugify(e.target.value || watch('title') || '');
+              if (next) setValue('slug', next);
+            }}
             className="w-full px-3 py-2.5 rounded-lg text-sm bg-neutral-800 border border-neutral-700 focus:border-violet-500 focus:outline-none text-neutral-100 font-mono"
             placeholder="project-slug"
           />
@@ -176,17 +187,16 @@ export function ProjectForm({ defaultValues, onSubmit, isLoading }: ProjectFormP
       {hasDetail && (
         <div>
           <label className="block text-xs font-medium text-neutral-400 mb-1.5">
-            Detail Content
+            Detail Content (Markdown)
           </label>
           <Controller
             name="detailContent"
             control={control}
             render={({ field }) => (
-              <RichEditor
-                content={field.value ?? ''}
+              <MarkdownEditor
+                value={field.value ?? ''}
                 onChange={field.onChange}
-                placeholder="Detailed project description..."
-                uploadModule="projects"
+                placeholder="Detailed project description in Markdown…"
               />
             )}
           />

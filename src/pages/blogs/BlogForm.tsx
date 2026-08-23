@@ -5,7 +5,8 @@ import { z } from 'zod';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { BlogCategory } from '@/types/api';
-import { RichEditor } from '@/components/editor/RichEditor';
+import { MarkdownEditor } from '@/components/editor/MarkdownEditor';
+import { slugify } from '@/lib/slug';
 import { ImageCropModal } from '@/components/ui/ImageCropModal';
 import toast from 'react-hot-toast';
 
@@ -72,9 +73,14 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
     const formData = new FormData();
     formData.append('file', blob, filename);
     formData.append('module', 'blog');
-    formData.append('format', 'webp');
-    formData.append('width', '1200');
-    formData.append('height', '630');
+    const isSvg = filename.toLowerCase().endsWith('.svg') || blob.type === 'image/svg+xml';
+    if (isSvg) {
+      formData.append('format', 'svg');
+    } else {
+      formData.append('format', 'webp');
+      formData.append('width', '1200');
+      formData.append('height', '630');
+    }
     try {
       const res = await api.post('/api/upload/image', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -101,7 +107,15 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-6">
+    <form
+      onSubmit={handleSubmit((data) =>
+        onSubmit({
+          ...data,
+          slug: slugify(data.slug || data.title),
+        })
+      )}
+      className="space-y-6 p-6"
+    >
       {/* Title */}
       <div>
         <label className="block text-xs font-medium text-neutral-400 mb-1.5">
@@ -109,6 +123,12 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
         </label>
         <input
           {...register('title')}
+          onBlur={(e) => {
+            if (!watch('slug')) {
+              const next = slugify(e.target.value);
+              if (next) setValue('slug', next);
+            }
+          }}
           className="w-full px-3 py-2.5 rounded-lg text-sm bg-neutral-800 border border-neutral-700 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 text-neutral-100"
           placeholder="Writing title"
         />
@@ -124,6 +144,10 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
         </label>
         <input
           {...register('slug')}
+          onBlur={(e) => {
+            const next = slugify(e.target.value || watch('title') || '');
+            if (next) setValue('slug', next);
+          }}
           className="w-full px-3 py-2.5 rounded-lg text-sm bg-neutral-800 border border-neutral-700 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 text-neutral-100 font-mono"
           placeholder="writing-url-slug"
         />
@@ -181,7 +205,9 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
                   <path d="M21 15l-5-5L5 21" />
                 </svg>
                 <span className="text-xs font-medium">Click to crop & upload</span>
-                <span className="text-[11px] text-neutral-600">1200×630 recommended, max 10MB</span>
+                <span className="text-[11px] text-neutral-600">
+                  JPG/PNG/WebP crop to 1200×630 · SVG kept as vector
+                </span>
               </>
             )}
           </button>
@@ -189,11 +215,19 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
         <input
           ref={thumbnailInputRef}
           type="file"
-          accept="image/*"
+          accept="image/*,.svg,image/svg+xml"
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
-            if (file) setCropFile(file);
+            if (!file) return;
+            const isSvg =
+              file.type === 'image/svg+xml' ||
+              file.name.toLowerCase().endsWith('.svg');
+            if (isSvg) {
+              void handleThumbnailUpload(file, file.name);
+            } else {
+              setCropFile(file);
+            }
             e.target.value = '';
           }}
         />
@@ -271,10 +305,11 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
           name="content"
           control={control}
           render={({ field }) => (
-            <RichEditor
-              content={field.value}
+            <MarkdownEditor
+              value={field.value ?? ''}
               onChange={field.onChange}
-              placeholder="Write your content here..."
+              placeholder="Write in Markdown (same as local .mdx body)…"
+              enableImages
               uploadModule="blog"
             />
           )}

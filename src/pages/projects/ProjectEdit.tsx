@@ -46,7 +46,6 @@ export function ProjectEditPage() {
           techStack: data.techStack?.join(', ') ?? undefined,
           githubUrl: data.githubUrl ?? undefined,
           demoUrl: data.demoUrl ?? undefined,
-          thumbnail: data.thumbnail,
           hasDetail: data.hasDetail,
           status: data.status,
         }}
