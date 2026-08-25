@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import { BlogCategory } from '@/types/api';
 import { MarkdownEditor } from '@/components/editor/MarkdownEditor';
 import { slugify } from '@/lib/slug';
+import { mediaUrl, toStoredMediaPath } from '@/lib/media';
 import { ImageCropModal } from '@/components/ui/ImageCropModal';
 import toast from 'react-hot-toast';
 
@@ -85,8 +86,7 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
       const res = await api.post('/api/upload/image', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      const url = `${import.meta.env.VITE_API_URL}${res.data.data.url}`;
-      setValue('thumbnail', url);
+      setValue('thumbnail', toStoredMediaPath(res.data.data.url));
       toast.success('Thumbnail uploaded');
     } catch {
       toast.error('Thumbnail upload failed');
@@ -98,8 +98,9 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
   const removeThumbnail = async () => {
     if (!thumbnail) return;
     try {
-      const publicPath = thumbnail.replace(import.meta.env.VITE_API_URL, '');
-      await api.delete('/api/upload/delete', { data: { url: publicPath } });
+      await api.delete('/api/upload/delete', {
+        data: { url: toStoredMediaPath(thumbnail) ?? thumbnail },
+      });
     } catch {
       // non-critical — remove from form regardless
     }
@@ -161,7 +162,7 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
         {thumbnail ? (
           <div className="w-full max-w-sm aspect-video rounded-xl overflow-hidden border border-neutral-700 bg-neutral-800 relative group">
             <img
-              src={thumbnail}
+              src={mediaUrl(thumbnail) ?? thumbnail}
               alt="Thumbnail preview"
               className="w-full h-full object-cover"
             />

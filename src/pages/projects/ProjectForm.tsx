@@ -197,6 +197,8 @@ export function ProjectForm({ defaultValues, onSubmit, isLoading }: ProjectFormP
                 value={field.value ?? ''}
                 onChange={field.onChange}
                 placeholder="Detailed project description in Markdown…"
+                enableImages
+                uploadModule="projects"
               />
             )}
           />
