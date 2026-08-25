@@ -25,6 +25,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import { api } from '@/lib/api';
+import { mediaUrl } from '@/lib/media';
 import { ImageCropModal } from '@/components/ui/ImageCropModal';
 
 type MarkdownEditorProps = {
@@ -151,6 +152,7 @@ const previewComponents = {
     dataAlign?: string;
   }) => {
     if (!src) return null;
+    const resolved = mediaUrl(src) ?? src;
     const align = props['data-align'] ?? props.dataAlign ?? 'center';
     const alignCls =
       align === 'left'
@@ -162,7 +164,7 @@ const previewComponents = {
             : 'mx-auto block';
     return (
       <img
-        src={src}
+        src={resolved}
         alt={alt ?? ''}
         width={width}
         height={height}
@@ -305,7 +307,7 @@ export function MarkdownEditor({
         const res = await api.post('/api/upload/image', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        const url = `${import.meta.env.VITE_API_URL}${res.data.data.url}`;
+        const url = res.data.data.url as string;
         const alt = filename.replace(/\.[^.]+$/, '');
         setPendingImage({ url, alt });
         setImageWidth(60);
@@ -621,7 +623,7 @@ export function MarkdownEditor({
           <div className="w-full max-w-md rounded-xl border border-neutral-700 bg-neutral-900 p-4 shadow-xl">
             <p className="mb-3 text-sm font-medium text-neutral-100">Image layout</p>
             <img
-              src={pendingImage.url}
+              src={mediaUrl(pendingImage.url) ?? pendingImage.url}
               alt={pendingImage.alt}
               className="mb-4 max-h-40 w-full rounded-lg border border-neutral-800 object-contain"
             />
