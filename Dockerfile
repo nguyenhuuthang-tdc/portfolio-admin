@@ -12,8 +12,12 @@ COPY . .
 
 # Vite variables are compiled into the browser bundle. The env file is mounted
 # as a BuildKit secret so the source file itself is never copied into a layer.
+# BuildKit does not include secret contents in its cache key, so BUILD_ENV_SHA
+# must change when the env changes.
+ARG BUILD_ENV_SHA=local
 RUN --mount=type=secret,id=admin_env,target=/run/secrets/admin_env \
-    cp /run/secrets/admin_env .env.production \
+    test -n "${BUILD_ENV_SHA}" \
+    && cp /run/secrets/admin_env .env.production \
     && npm run build \
     && rm -f .env .env.local .env.production .env.development \
       .env.development.local .env.production.local
