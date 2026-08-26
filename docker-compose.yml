@@ -1,0 +1,19 @@
+# Local: copy .env.example -> .env, then docker compose up --build
+# VPS: CI copies this file to TARGET_DIR, pulls the image SHA, then runs up --no-build.
+# VITE_* values are build-time public values; they are compiled into the static bundle.
+services:
+  portfolio-admin:
+    container_name: portfolio-admin
+    image: ${DOCKER_IMAGE_NAME:-portfolio-admin}:${DOCKER_IMAGE_TAG:-local}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      secrets:
+        - admin_env
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3001}:80"
+
+secrets:
+  admin_env:
+    file: .env

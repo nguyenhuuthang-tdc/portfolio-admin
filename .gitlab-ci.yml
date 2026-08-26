@@ -1,0 +1,27 @@
+stages:
+  - production
+
+# Enable GitLab Container Registry on this projec# VPS once: create TARGET_DIR, copy .env.example to .env, and use runner tag "vps".
+# The app source does not need to be cloned into TARGET_DIR.
+
+build-production:
+  stage: production
+  only:
+    - main
+  tags:
+    - vps
+  when: manual
+  variables:
+    DOCKER_IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+    DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE
+    DOCKER_CONTAINER_NAME: portfolio-admin
+    TARGET_DIR: /home/tom/services/porfolio/porfolio-admin
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - chmod u+x ./scripts/build.sh ./scripts/run.sh
+    - ./scripts/build.sh
+    - mkdir -p "${TARGET_DIR}"
+    - cp docker-compose.yml "${TARGET_DIR}/docker-compose.yml"
+    - ./scripts/run.sh
+    - ./scripts/run.sh
