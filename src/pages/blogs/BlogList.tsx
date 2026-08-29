@@ -13,12 +13,12 @@ export function BlogListPage() {
     queryKey: ['blogs', 'admin'],
     queryFn: () =>
       api
-        .get<PaginatedResponse<Blog>>('/api/blogs?status=all&limit=50')
+        .get<PaginatedResponse<Blog>>('/api/v1/admin/blogs?status=all&limit=50')
         .then((r) => r.data),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => api.delete(`/api/blogs/${id}`),
+    mutationFn: (id: number) => api.delete(`/api/v1/admin/blogs/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['blogs'] });
       toast.success('Blog deleted');

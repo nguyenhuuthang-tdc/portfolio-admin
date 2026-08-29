@@ -10,7 +10,7 @@ export function BlogCreatePage() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (data: BlogFormData) => api.post('/api/blogs', data),
+    mutationFn: (data: BlogFormData) => api.post('/api/v1/admin/blogs', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['blogs'] });
       toast.success('Writing created!');

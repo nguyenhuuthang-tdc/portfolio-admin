@@ -15,14 +15,14 @@ export function BlogEditPage() {
     queryKey: ['blog', id],
     queryFn: () =>
       api
-        .get<{ success: boolean; data: Blog }>(`/api/blogs/${id}`)
+        .get<{ success: boolean; data: Blog }>(`/api/v1/admin/blogs/${id}`)
         .then((r) => r.data.data),
     enabled: !!id,
   });
 
   const mutation = useMutation({
     mutationFn: (formData: BlogFormData) =>
-      api.put(`/api/blogs/${id}`, formData),
+      api.put(`/api/v1/admin/blogs/${id}`, formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['blogs'] });
       queryClient.invalidateQueries({ queryKey: ['blog', id] });

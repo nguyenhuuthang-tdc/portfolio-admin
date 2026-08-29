@@ -56,7 +56,7 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
     queryKey: ['blog-categories'],
     queryFn: () =>
       api
-        .get<{ success: boolean; data: BlogCategory[] }>('/api/blogs/categories')
+        .get<{ success: boolean; data: BlogCategory[] }>('/api/v1/admin/blogs/categories')
         .then((r) => r.data.data),
   });
 
@@ -83,7 +83,7 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
       formData.append('height', '630');
     }
     try {
-      const res = await api.post('/api/upload/image', formData, {
+      const res = await api.post('/api/v1/admin/uploads/image', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setValue('thumbnail', toStoredMediaPath(res.data.data.url));
@@ -98,7 +98,7 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
   const removeThumbnail = async () => {
     if (!thumbnail) return;
     try {
-      await api.delete('/api/upload/delete', {
+      await api.delete('/api/v1/admin/uploads/delete', {
         data: { url: toStoredMediaPath(thumbnail) ?? thumbnail },
       });
     } catch {

@@ -21,7 +21,7 @@ function PasswordForm() {
 
   const mutation = useMutation({
     mutationFn: (data: { currentPassword: string; newPassword: string }) =>
-      api.put('/api/auth/password', data),
+      api.put('/api/v1/auth/password', data),
     onSuccess: () => {
       toast.success('Password updated');
       reset();
@@ -89,7 +89,7 @@ function TelegramForm() {
     queryKey: ['telegram-config'],
     queryFn: () =>
       api
-        .get<{ success: boolean; data: TelegramConfig }>('/api/settings/telegram')
+        .get<{ success: boolean; data: TelegramConfig }>('/api/v1/admin/settings/telegram')
         .then((r) => r.data.data),
   });
 
@@ -103,7 +103,7 @@ function TelegramForm() {
 
   const mutation = useMutation({
     mutationFn: (body: { botToken?: string; chatId: string; enabled: boolean }) =>
-      api.put('/api/settings/telegram', body),
+      api.put('/api/v1/admin/settings/telegram', body),
     onSuccess: (res) => {
       const cfg = res.data.data as TelegramConfig;
       queryClient.setQueryData(['telegram-config'], cfg);

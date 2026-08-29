@@ -304,7 +304,7 @@ export function MarkdownEditor({
         formData.append('width', '1600');
       }
       try {
-        const res = await api.post('/api/upload/image', formData, {
+        const res = await api.post('/api/v1/admin/uploads/image', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         const url = res.data.data.url as string;
