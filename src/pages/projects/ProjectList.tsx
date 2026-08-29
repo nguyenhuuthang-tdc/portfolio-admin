@@ -13,12 +13,12 @@ export function ProjectListPage() {
     queryKey: ['projects', 'admin'],
     queryFn: () =>
       api
-        .get<{ success: boolean; data: Project[] }>('/api/projects?all=true')
+        .get<{ success: boolean; data: Project[] }>('/api/v1/admin/projects')
         .then((r) => r.data),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => api.delete(`/api/projects/${id}`),
+    mutationFn: (id: number) => api.delete(`/api/v1/admin/projects/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       toast.success('Project deleted');

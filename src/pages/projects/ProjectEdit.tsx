@@ -15,14 +15,14 @@ export function ProjectEditPage() {
     queryKey: ['project', id],
     queryFn: () =>
       api
-        .get<{ success: boolean; data: Project }>(`/api/projects/${id}`)
+        .get<{ success: boolean; data: Project }>(`/api/v1/admin/projects/${id}`)
         .then((r) => r.data.data),
     enabled: !!id,
   });
 
   const mutation = useMutation({
     mutationFn: (formData: ProjectFormData) =>
-      api.put(`/api/projects/${id}`, formData),
+      api.put(`/api/v1/admin/projects/${id}`, formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       toast.success('Project updated!');

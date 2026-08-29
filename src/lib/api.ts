@@ -8,17 +8,21 @@ export const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Auto-refresh on 401
+const isLoginRequest = (url?: string) =>
+  url?.split('?')[0].endsWith('/api/v1/auth/login') ?? false;
+
 api.interceptors.response.use(
   (res) => res,
   async (err) => {
-    if (err.response?.status === 401 && !err.config._retry) {
+    if (err.response?.status === 401 && !err.config._retry && !isLoginRequest(err.config.url)) {
       err.config._retry = true;
       try {
-        await axios.post(`${API_URL}/api/auth/refresh`, {}, { withCredentials: true });
+        await axios.post(`${API_URL}/api/v1/auth/refresh`, {}, { withCredentials: true });
         return api(err.config);
       } catch {
-        window.location.href = '/login';
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
       }
     }
     return Promise.reject(err);

@@ -9,7 +9,7 @@ export function DashboardPage() {
     queryKey: ['blogs', 'all'],
     queryFn: () =>
       api
-        .get<PaginatedResponse<Blog>>('/api/blogs?status=all&limit=1')
+        .get<PaginatedResponse<Blog>>('/api/v1/admin/blogs?status=all&limit=1')
         .then((r) => r.data),
   });
 
@@ -17,7 +17,7 @@ export function DashboardPage() {
     queryKey: ['projects', 'all'],
     queryFn: () =>
       api
-        .get<{ success: boolean; data: Project[] }>('/api/projects?all=true')
+        .get<{ success: boolean; data: Project[] }>('/api/v1/admin/projects')
         .then((r) => r.data),
   });
 
@@ -25,7 +25,7 @@ export function DashboardPage() {
     queryKey: ['contacts', 'recent'],
     queryFn: () =>
       api
-        .get<PaginatedResponse<Contact>>('/api/contact?limit=5')
+        .get<PaginatedResponse<Contact>>('/api/v1/admin/contacts?limit=5')
         .then((r) => r.data),
   });
 

@@ -10,7 +10,7 @@ export function ProjectCreatePage() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (data: ProjectFormData) => api.post('/api/projects', data),
+    mutationFn: (data: ProjectFormData) => api.post('/api/v1/admin/projects', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       toast.success('Project created!');

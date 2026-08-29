@@ -15,7 +15,7 @@ function SectionEditor({ section }: { section: AboutSection }) {
 
   const mutation = useMutation({
     mutationFn: (data: { content: string; label: string }) =>
-      api.put(`/api/about/sections/${section.key}`, data),
+      api.put(`/api/v1/admin/about/sections/${section.key}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['about-sections'] });
       toast.success(`${section.key} saved`);
@@ -91,7 +91,7 @@ export function AboutPage() {
     queryKey: ['about-sections'],
     queryFn: () =>
       api
-        .get<{ success: boolean; data: AboutSection[] }>('/api/about/sections')
+        .get<{ success: boolean; data: AboutSection[] }>('/api/v1/admin/about/sections')
         .then((r) => r.data.data),
   });
 
@@ -99,13 +99,13 @@ export function AboutPage() {
     queryKey: ['skills', 'admin'],
     queryFn: () =>
       api
-        .get<{ success: boolean; data: Skill[] }>('/api/about/skills?admin=true')
+        .get<{ success: boolean; data: Skill[] }>('/api/v1/admin/about/skills')
         .then((r) => r.data.data),
   });
 
   const createSkillMutation = useMutation({
     mutationFn: (data: typeof newSkill) =>
-      api.post('/api/about/skills', data),
+      api.post('/api/v1/admin/about/skills', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['skills'] });
       setNewSkill({ name: '', category: '', level: 3 });
@@ -115,7 +115,7 @@ export function AboutPage() {
   });
 
   const deleteSkillMutation = useMutation({
-    mutationFn: (id: number) => api.delete(`/api/about/skills/${id}`),
+    mutationFn: (id: number) => api.delete(`/api/v1/admin/about/skills/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['skills'] });
       toast.success('Skill deleted');

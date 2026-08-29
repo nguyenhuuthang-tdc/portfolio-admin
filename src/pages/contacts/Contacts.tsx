@@ -12,19 +12,19 @@ export function ContactsPage() {
     queryKey: ['contacts'],
     queryFn: () =>
       api
-        .get<PaginatedResponse<Contact>>('/api/contact?limit=50')
+        .get<PaginatedResponse<Contact>>('/api/v1/admin/contacts?limit=50')
         .then((r) => r.data),
   });
 
   const markReadMutation = useMutation({
-    mutationFn: (id: number) => api.patch(`/api/contact/${id}/read`),
+    mutationFn: (id: number) => api.patch(`/api/v1/admin/contacts/${id}/read`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contacts'] });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => api.delete(`/api/contact/${id}`),
+    mutationFn: (id: number) => api.delete(`/api/v1/admin/contacts/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contacts'] });
       toast.success('Deleted');

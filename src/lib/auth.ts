@@ -7,16 +7,16 @@ export interface AuthUser {
 
 export const authService = {
   async login(email: string, password: string): Promise<AuthUser> {
-    const res = await api.post('/api/auth/login', { email, password });
+    const res = await api.post('/api/v1/auth/login', { email, password });
     return res.data.data.user;
   },
 
   async logout(): Promise<void> {
-    await api.post('/api/auth/logout');
+    await api.post('/api/v1/auth/logout');
   },
 
   async me(): Promise<AuthUser> {
-    const res = await api.get('/api/auth/me');
+    const res = await api.get('/api/v1/auth/me');
     return res.data.data;
   },
 };

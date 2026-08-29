@@ -41,12 +41,12 @@ export function BlogCategoriesPage() {
     queryKey: ['blog-categories'],
     queryFn: () =>
       api
-        .get<{ success: boolean; data: BlogCategory[] }>('/api/blogs/categories')
+        .get<{ success: boolean; data: BlogCategory[] }>('/api/v1/admin/blogs/categories')
         .then((r) => r.data.data),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: CategoryForm) => api.post('/api/blogs/categories', data),
+    mutationFn: (data: CategoryForm) => api.post('/api/v1/admin/blogs/categories', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['blog-categories'] });
       setShowCreate(false);
@@ -58,7 +58,7 @@ export function BlogCategoriesPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: CategoryForm }) =>
-      api.put(`/api/blogs/categories/${id}`, data),
+      api.put(`/api/v1/admin/blogs/categories/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['blog-categories'] });
       setEditId(null);
@@ -68,7 +68,7 @@ export function BlogCategoriesPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => api.delete(`/api/blogs/categories/${id}`),
+    mutationFn: (id: number) => api.delete(`/api/v1/admin/blogs/categories/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['blog-categories'] });
       toast.success('Category deleted');
