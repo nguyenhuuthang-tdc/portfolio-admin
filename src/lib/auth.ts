@@ -1,4 +1,4 @@
-import { api } from './api';
+import { api, clearCsrfToken } from './api';
 
 export interface AuthUser {
   id: number;
@@ -12,7 +12,11 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
-    await api.post('/api/v1/auth/logout');
+    try {
+      await api.post('/api/v1/auth/logout');
+    } finally {
+      clearCsrfToken();
+    }
   },
 
   async me(): Promise<AuthUser> {

@@ -5,6 +5,7 @@ import { BlogCategory } from '@/types/api';
 import toast from 'react-hot-toast';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Plus, Pencil, Trash2, Check, X, Tags } from 'lucide-react';
+import { showApiError } from '@/lib/api-error-toast';
 
 const PRESET_COLORS = [
   '#6d28d9', '#7c3aed', '#8b5cf6', '#a78bfa',
@@ -53,7 +54,7 @@ export function BlogCategoriesPage() {
       setForm(EMPTY_FORM);
       toast.success('Category created');
     },
-    onError: () => toast.error('Failed to create category'),
+    onError: (error) => showApiError(error, 'Failed to create category'),
   });
 
   const updateMutation = useMutation({
@@ -64,7 +65,7 @@ export function BlogCategoriesPage() {
       setEditId(null);
       toast.success('Category updated');
     },
-    onError: () => toast.error('Failed to update category'),
+    onError: (error) => showApiError(error, 'Failed to update category'),
   });
 
   const deleteMutation = useMutation({
@@ -73,7 +74,7 @@ export function BlogCategoriesPage() {
       queryClient.invalidateQueries({ queryKey: ['blog-categories'] });
       toast.success('Category deleted');
     },
-    onError: () => toast.error('Failed to delete category'),
+    onError: (error) => showApiError(error, 'Failed to delete category'),
   });
 
   const handleCreateNameChange = (name: string) => {

@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { authService } from '@/lib/auth';
-import toast from 'react-hot-toast';
+import { showApiError } from '@/lib/api-error-toast';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -18,8 +18,8 @@ export function LoginPage() {
       const user = await authService.login(email, password);
       queryClient.setQueryData(['me'], user);
       navigate('/');
-    } catch {
-      toast.error('Invalid credentials');
+    } catch (error) {
+      const apiError = showApiError(error, 'Unable to sign in');
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,10 @@ export function LoginPage() {
             disabled={loading}
             className="w-full py-2.5 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white rounded-lg text-sm font-medium transition-colors"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading
+              ? 'Signing in...'
+              : 'Sign In'
+			}
           </button>
         </form>
       </div>

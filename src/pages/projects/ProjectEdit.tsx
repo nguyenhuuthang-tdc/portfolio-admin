@@ -5,6 +5,7 @@ import { Project } from '@/types/api';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ProjectForm, ProjectFormData } from './ProjectForm';
 import toast from 'react-hot-toast';
+import { showApiError } from '@/lib/api-error-toast';
 
 export function ProjectEditPage() {
   const { id } = useParams<{ id: string }>();
@@ -28,7 +29,7 @@ export function ProjectEditPage() {
       toast.success('Project updated!');
       navigate('/projects');
     },
-    onError: () => toast.error('Update failed'),
+    onError: (error) => showApiError(error, 'Update failed'),
   });
 
   if (isLoading) return <div className="p-6 text-sm text-neutral-500">Loading...</div>;

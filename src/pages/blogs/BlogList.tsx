@@ -5,6 +5,7 @@ import { Blog, PaginatedResponse } from '@/types/api';
 import { PageHeader } from '@/components/ui/PageHeader';
 import toast from 'react-hot-toast';
 import { Pencil, Trash2, Plus } from 'lucide-react';
+import { showApiError } from '@/lib/api-error-toast';
 
 export function BlogListPage() {
   const queryClient = useQueryClient();
@@ -23,7 +24,7 @@ export function BlogListPage() {
       queryClient.invalidateQueries({ queryKey: ['blogs'] });
       toast.success('Blog deleted');
     },
-    onError: () => toast.error('Delete failed'),
+    onError: (error) => showApiError(error, 'Delete failed'),
   });
 
   const handleDelete = (blog: Blog) => {
