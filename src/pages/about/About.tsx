@@ -6,6 +6,7 @@ import { AboutSection, Skill } from '@/types/api';
 import { PageHeader } from '@/components/ui/PageHeader';
 import toast from 'react-hot-toast';
 import { Plus, Pencil, Trash2, Save } from 'lucide-react';
+import { showApiError } from '@/lib/api-error-toast';
 
 function SectionEditor({ section }: { section: AboutSection }) {
   const queryClient = useQueryClient();
@@ -20,7 +21,7 @@ function SectionEditor({ section }: { section: AboutSection }) {
       queryClient.invalidateQueries({ queryKey: ['about-sections'] });
       toast.success(`${section.key} saved`);
     },
-    onError: () => toast.error('Save failed'),
+    onError: (error) => showApiError(error, 'Save failed'),
   });
 
   return (
@@ -111,7 +112,7 @@ export function AboutPage() {
       setNewSkill({ name: '', category: '', level: 3 });
       toast.success('Skill added');
     },
-    onError: () => toast.error('Failed to add skill'),
+    onError: (error) => showApiError(error, 'Failed to add skill'),
   });
 
   const deleteSkillMutation = useMutation({
@@ -120,6 +121,7 @@ export function AboutPage() {
       queryClient.invalidateQueries({ queryKey: ['skills'] });
       toast.success('Skill deleted');
     },
+    onError: (error) => showApiError(error, 'Failed to delete skill'),
   });
 
   return (

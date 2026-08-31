@@ -4,6 +4,7 @@ import { api } from '@/lib/api';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ProjectForm, ProjectFormData } from './ProjectForm';
 import toast from 'react-hot-toast';
+import { showApiError } from '@/lib/api-error-toast';
 
 export function ProjectCreatePage() {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ export function ProjectCreatePage() {
       toast.success('Project created!');
       navigate('/projects');
     },
-    onError: () => toast.error('Failed to create project'),
+    onError: (error) => showApiError(error, 'Failed to create project'),
   });
 
   return (

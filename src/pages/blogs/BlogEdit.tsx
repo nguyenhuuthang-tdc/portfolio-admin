@@ -5,6 +5,7 @@ import { Blog } from '@/types/api';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BlogForm, BlogFormData } from './BlogForm';
 import toast from 'react-hot-toast';
+import { showApiError } from '@/lib/api-error-toast';
 
 export function BlogEditPage() {
   const { id } = useParams<{ id: string }>();
@@ -29,7 +30,7 @@ export function BlogEditPage() {
       toast.success('Writing updated!');
       navigate('/blogs');
     },
-    onError: () => toast.error('Update failed'),
+    onError: (error) => showApiError(error, 'Update failed'),
   });
 
   if (isLoading) {

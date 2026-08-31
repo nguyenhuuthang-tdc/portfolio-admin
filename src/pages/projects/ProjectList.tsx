@@ -5,6 +5,7 @@ import { Project } from '@/types/api';
 import { PageHeader } from '@/components/ui/PageHeader';
 import toast from 'react-hot-toast';
 import { Pencil, Trash2, Plus, Globe, GitBranch } from 'lucide-react';
+import { showApiError } from '@/lib/api-error-toast';
 
 export function ProjectListPage() {
   const queryClient = useQueryClient();
@@ -23,7 +24,7 @@ export function ProjectListPage() {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       toast.success('Project deleted');
     },
-    onError: () => toast.error('Delete failed'),
+    onError: (error) => showApiError(error, 'Delete failed'),
   });
 
   return (

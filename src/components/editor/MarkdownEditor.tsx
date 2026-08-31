@@ -27,6 +27,7 @@ import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import { api } from '@/lib/api';
 import { mediaUrl } from '@/lib/media';
 import { ImageCropModal } from '@/components/ui/ImageCropModal';
+import { showApiError } from '@/lib/api-error-toast';
 
 type MarkdownEditorProps = {
   value: string;
@@ -313,8 +314,8 @@ export function MarkdownEditor({
         setImageWidth(60);
         setImageAlign('center');
         toast.success('Choose size and alignment', { id: toastId });
-      } catch {
-        toast.error('Upload failed', { id: toastId });
+      } catch (error) {
+        showApiError(error, 'Upload failed', { id: toastId });
       }
     },
     [uploadModule]

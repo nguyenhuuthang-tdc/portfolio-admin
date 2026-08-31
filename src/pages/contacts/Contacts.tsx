@@ -4,6 +4,7 @@ import { Contact, PaginatedResponse } from '@/types/api';
 import { PageHeader } from '@/components/ui/PageHeader';
 import toast from 'react-hot-toast';
 import { Trash2, MailOpen } from 'lucide-react';
+import { showApiError } from '@/lib/api-error-toast';
 
 export function ContactsPage() {
   const queryClient = useQueryClient();
@@ -21,6 +22,7 @@ export function ContactsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contacts'] });
     },
+    onError: (error) => showApiError(error, 'Failed to mark message as read'),
   });
 
   const deleteMutation = useMutation({
@@ -29,7 +31,7 @@ export function ContactsPage() {
       queryClient.invalidateQueries({ queryKey: ['contacts'] });
       toast.success('Deleted');
     },
-    onError: () => toast.error('Delete failed'),
+    onError: (error) => showApiError(error, 'Delete failed'),
   });
 
   const unreadCount = data?.data.filter((c) => !c.isRead).length ?? 0;

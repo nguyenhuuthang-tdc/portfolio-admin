@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authService } from '@/lib/auth';
-import toast from 'react-hot-toast';
+import { showApiError } from '@/lib/api-error-toast';
 import {
   LayoutDashboard,
   FileText,
@@ -33,7 +33,7 @@ export function AdminLayout() {
       queryClient.clear();
       navigate('/login');
     },
-    onError: () => toast.error('Logout failed'),
+    onError: (error) => showApiError(error, 'Logout failed'),
   });
 
   return (

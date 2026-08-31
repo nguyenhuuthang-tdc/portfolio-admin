@@ -4,6 +4,7 @@ import { api } from '@/lib/api';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BlogForm, BlogFormData } from './BlogForm';
 import toast from 'react-hot-toast';
+import { showApiError } from '@/lib/api-error-toast';
 
 export function BlogCreatePage() {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ export function BlogCreatePage() {
       toast.success('Writing created!');
       navigate('/blogs');
     },
-    onError: () => toast.error('Failed to create writing'),
+    onError: (error) => showApiError(error, 'Failed to create writing'),
   });
 
   return (

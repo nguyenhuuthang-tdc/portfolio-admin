@@ -10,6 +10,7 @@ import { slugify } from '@/lib/slug';
 import { mediaUrl, toStoredMediaPath } from '@/lib/media';
 import { ImageCropModal } from '@/components/ui/ImageCropModal';
 import toast from 'react-hot-toast';
+import { showApiError } from '@/lib/api-error-toast';
 
 const BlogFormSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -88,8 +89,8 @@ export function BlogForm({ defaultValues, onSubmit, isLoading }: BlogFormProps) 
       });
       setValue('thumbnail', toStoredMediaPath(res.data.data.url));
       toast.success('Thumbnail uploaded');
-    } catch {
-      toast.error('Thumbnail upload failed');
+    } catch (error) {
+      showApiError(error, 'Thumbnail upload failed');
     } finally {
       setThumbnailUploading(false);
     }

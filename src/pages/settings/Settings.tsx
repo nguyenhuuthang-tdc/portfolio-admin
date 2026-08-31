@@ -4,6 +4,7 @@ import { api } from '@/lib/api';
 import { PageHeader } from '@/components/ui/PageHeader';
 import toast from 'react-hot-toast';
 import { Save } from 'lucide-react';
+import { showApiError } from '@/lib/api-error-toast';
 
 type TelegramConfig = {
   chatId: string;
@@ -25,10 +26,9 @@ function PasswordForm() {
     onSuccess: () => {
       toast.success('Password updated');
       reset();
+      window.location.href = '/login';
     },
-    onError: (err: { response?: { data?: { message?: string } } }) => {
-      toast.error(err.response?.data?.message ?? 'Update failed');
-    },
+    onError: (error) => showApiError(error, 'Password update failed'),
   });
 
   return (
@@ -110,9 +110,7 @@ function TelegramForm() {
       reset({ botToken: '', chatId: cfg.chatId, enabled: cfg.enabled });
       toast.success('Telegram settings saved');
     },
-    onError: (err: { response?: { data?: { message?: string } } }) => {
-      toast.error(err.response?.data?.message ?? 'Save failed');
-    },
+    onError: (error) => showApiError(error, 'Telegram settings update failed'),
   });
 
   if (isLoading) {
